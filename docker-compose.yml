@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  master:
+    build: .
+    command: ["master"]
+
+    hostname: master
+    environment:
+      DEBUG: "true"
+      MASTER: spark://master:7077
+      SPARK_PUBLIC_DNS: localhost
+    ports:
+      - 4040:4040
+      - 6066:6066
+      - 7077:7077
+      - 8080:8080
+
+  worker1:
+    build: .
+    command: ["worker", "spark://master:7077"]
+    depends_on:
+      - master
+
+    environment:
+      SPARK_WORKER_WEBUI_PORT: 8081
+      SPARK_PUBLIC_DNS: localhost
+    ports:
+      - 8081:8081
