@@ -1,7 +1,6 @@
 FROM openjdk:8-jre
 
 ENV SPARK_VERSION="2.4.3" \
-    # https://www.apache.org/dist/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz.sha512
     SPARK_CHECKSUM="e8b7f9e1dec868282cadcad81599038a22f48fb597d44af1b13fcc76b7dacd2a1caf431f95e394e1227066087e3ce6c2137c4abaf60c60076b78f959074ff2ad" \
     SPARK_INSTALL_DIR="/opt/spark" \
     HADOOP_VERSION="2.7.7" \
@@ -40,7 +39,8 @@ RUN useradd --system --create-home --home-dir "${SPARK_HOME}" spark \
 COPY scripts/entrypoint.bash /sbin/entrypoint.bash
 RUN chmod 755 /sbin/entrypoint.bash
 
-ENV PATH="${SPARK_INSTALL_DIR}/bin:${PATH}"
+ENV PATH="${SPARK_INSTALL_DIR}/bin:${PATH}" \
+    LD_LIBRARY_PATH="${HADOOP_HOME}/lib/native:${LD_LIBRARY_PATH}"
 
 WORKDIR /opt/spark
 USER spark
