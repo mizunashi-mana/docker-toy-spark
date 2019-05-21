@@ -7,9 +7,7 @@ services:
 
     hostname: master
     environment:
-      DEBUG: "true"
       MASTER: spark://master:7077
-      SPARK_PUBLIC_DNS: localhost
     ports:
       - 4040:4040
       - 6066:6066
@@ -24,6 +22,5 @@ services:
 
     environment:
       SPARK_WORKER_WEBUI_PORT: 8081
-      SPARK_PUBLIC_DNS: localhost
     ports:
       - 8081:8081

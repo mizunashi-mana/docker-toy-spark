@@ -8,9 +8,9 @@ ENV SPARK_VERSION="2.4.3" \
     HADOOP_INSTALL_DIR="/opt/hadoop"
 
 ENV SPARK_HOME="${SPARK_INSTALL_DIR}" \
-    SPARK_CONF_DIR="${SPARK_HOME}/conf" \
+    SPARK_CONF_DIR="${SPARK_INSTALL_DIR}/conf" \
     HADOOP_HOME="${HADOOP_INSTALL_DIR}" \
-    HADOOP_CONF_DIR="${HADOOP_HOME}/etc/hadoop"
+    HADOOP_CONF_DIR="${SPARK_INSTALL_DIR}/etc/hadoop"
 
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -36,14 +36,14 @@ RUN useradd --system --create-home --home-dir "${SPARK_HOME}" spark \
  && tar -xz --strip 1 -f "spark-bin-hadoop.tgz" \
  && chown -R spark:spark "${SPARK_HOME}"
 
-COPY scripts/entrypoint.bash /sbin/entrypoint.bash
-RUN chmod 755 /sbin/entrypoint.bash
-
 ENV PATH="${SPARK_INSTALL_DIR}/bin:${PATH}" \
     LD_LIBRARY_PATH="${HADOOP_HOME}/lib/native:${LD_LIBRARY_PATH}"
 
-WORKDIR /opt/spark
+COPY scripts/entrypoint.bash /sbin/entrypoint.bash
+RUN chmod 755 /sbin/entrypoint.bash
+
 USER spark
+WORKDIR $SPARK_HOME
 
 ENTRYPOINT [ "/sbin/entrypoint.bash" ]
 CMD ["master"]
